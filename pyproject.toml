@@ -1,0 +1,26 @@
+[project]
+name = "pdf-multiagent-analysis"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Priyadarshi Das", email = "appy28@outlook.com" }
+]
+dependencies = [
+    "chromadb>=1.0.13",
+    "crewai>=0.130.0",
+    "faiss-cpu>=1.11.0",
+    "fastapi>=0.115.13",
+    "langchain>=0.3.26",
+    "langchain-community>=0.3.26",
+    "langchain-huggingface>=0.3.0",
+    "langchain-ollama>=0.3.3",
+    "mcp>=1.9.4",
+    "openai>=1.90.0",
+    "pymupdf>=1.26.1",
+    "pypdf>=5.6.0",
+    "python-dotenv>=1.1.0",
+    "sentence-transformers>=4.1.0",
+    "uvicorn>=0.34.3",
+]

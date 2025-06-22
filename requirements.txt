@@ -1,0 +1,15 @@
+crewai
+langchain
+langchain-community
+langchain-ollama
+pypdf
+pymupdf
+faiss-cpu
+chromadb
+fastapi
+uvicorn
+openai
+mcp
+python-dotenv
+sentence-transformers
+langchain-huggingface
