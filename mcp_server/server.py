@@ -46,8 +46,12 @@ async def analyze_policy(request: AnalyzeRequest):
 
     # Task 1: Summarize user activity
     task1 = Task(
-        description=f"Analyze this banking activity and summarize it:\n{banking_input}",
-        expected_output="A summary of the user's action.",
+        description=(
+        "Given the following banking activity log, provide a concise summary of what the user did. "
+        "Only describe the action objectively.\n\n"
+        f"Banking Activity: {banking_input}"
+        ),
+        expected_output="A structured analysis with impact ratings (High/Medium/Low).",
         agent=analyzer
     )
     crew1 = Crew(agents=[analyzer], tasks=[task1], verbose=True)
