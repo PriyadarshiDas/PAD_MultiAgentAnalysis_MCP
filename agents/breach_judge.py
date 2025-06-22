@@ -12,17 +12,18 @@ llm = ChatOllama(
     model=model_name,
     provider="ollama",
     temperature=0.1,
+    max_tokens=1000,
     base_url="http://localhost:11434" 
 )
 
-def get_breach_judge(llm):
+def get_breach_judge(llm, tools=[]):
     return Agent(
         role="Breach Decision Maker",
         goal="Decide whether a policy is breached based on expert input",
         backstory="Experts in making logical decisions with legal grounding.",
         verbose=True,
-        tools=[],
+        tools=tools,
         memory=True,
         llm=llm,
-        allow_delegation=False
+        allow_delegation=True
     )

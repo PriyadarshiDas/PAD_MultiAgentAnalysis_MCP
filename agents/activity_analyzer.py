@@ -11,17 +11,19 @@ llm = ChatOllama(
     model=model_name,
     provider="ollama",
     temperature=0.1,
+    max_tokens=1000,
     base_url="http://localhost:11434" 
 )
 
-def get_activity_analyzer(llm):
+def get_activity_analyzer(llm, tools=[]):
     return Agent(
         role="Activity Analyzer",
         goal="Analyze user's banking activity and extract key actions",
-        backstory="Expert in understanding banking fraud, transaction logs and financial behaviors.",
+        backstory="Expert in understanding transaction logs and financial behaviors.",
         verbose=True,
-        tools=[],
+        tools=tools,
         memory=True,
-        llm=llm
+        llm=llm,
+        allow_delegation=True
     )
 

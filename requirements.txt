@@ -13,3 +13,5 @@ mcp
 python-dotenv
 sentence-transformers
 langchain-huggingface
+crewai-tools[mcp]
+crewai-tools

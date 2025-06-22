@@ -13,16 +13,18 @@ llm = ChatOllama(
     model=model_name,
     provider="ollama",
     temperature=0.1,
+    max_tokens=1000,
     base_url="http://localhost:11434" 
 )
 
-def get_policy_agent(llm):
+def get_policy_agent(llm, tools=[]):
     return Agent(
         role="Policy Expert",
         goal="Interpret company policy clauses relevant to banking activities",
         backstory="An expert in legal compliance and digital policy governance.",
         verbose=True,
-        tools=[],
+        tools=tools,
         memory=True,
         llm=llm,
+        allow_delegation=True
     )
