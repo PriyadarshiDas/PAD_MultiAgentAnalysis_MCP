@@ -18,7 +18,7 @@ def get_activity_analyzer(llm):
     return Agent(
         role="Activity Analyzer",
         goal="Analyze user's banking activity and extract key actions",
-        backstory="Understands transaction logs and financial behaviors.",
+        backstory="Expert in understanding banking fraud, transaction logs and financial behaviors.",
         verbose=True,
         tools=[],
         memory=True,

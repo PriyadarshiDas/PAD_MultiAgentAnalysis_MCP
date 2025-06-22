@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 from agents.policy_expert import get_policy_agent
 from agents.activity_analyzer import get_activity_analyzer
@@ -17,6 +18,15 @@ model_name = os.getenv("MODEL")
 
 # FastAPI app instance
 app = FastAPI()
+
+# Enable CORS for all origins (safe in local dev)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or ["http://localhost:5500"] if you host HTML via Live Server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Create LLM object
 llm = ChatOllama(

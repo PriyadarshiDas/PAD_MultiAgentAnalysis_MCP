@@ -19,9 +19,10 @@ def get_breach_judge(llm):
     return Agent(
         role="Breach Decision Maker",
         goal="Decide whether a policy is breached based on expert input",
-        backstory="Makes logical decisions with legal grounding.",
+        backstory="Experts in making logical decisions with legal grounding.",
         verbose=True,
         tools=[],
         memory=True,
-        llm=llm
+        llm=llm,
+        allow_delegation=False
     )
