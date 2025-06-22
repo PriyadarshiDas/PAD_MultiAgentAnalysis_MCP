@@ -11,10 +11,9 @@ from retriever.policy_retriever import setup_retriever
 from crewai import Crew, Task
 from langchain_ollama import ChatOllama
 
-
 # Load environment variables
 load_dotenv()
-model_name = os.getenv("MODEL") or "llama3"  # fallback to llama3 if not in .env
+model_name = os.getenv("MODEL")
 
 # FastAPI app instance
 app = FastAPI()
@@ -22,11 +21,11 @@ app = FastAPI()
 # Create LLM object
 llm = ChatOllama(
     model=model_name,
+    provider="ollama",
     temperature=0.1,
+    base_url="http://localhost:11434",
     max_tokens=1000
 )
-
-
 
 # PDF Retriever setup
 retriever = setup_retriever("data/policies/company_policy.pdf")
@@ -40,12 +39,12 @@ class AnalyzeRequest(BaseModel):
 async def analyze_policy(request: AnalyzeRequest):
     banking_input = request.banking_activity
 
-    # Agents setup
+    # Agent setup
     analyzer = get_activity_analyzer(llm)
     policy_expert = get_policy_agent(llm)
     judge = get_breach_judge(llm)
 
-    # Task 1: Analyze Activity
+    # Task 1: Summarize user activity
     task1 = Task(
         description=f"Analyze this banking activity and summarize it:\n{banking_input}",
         expected_output="A summary of the user's action.",
@@ -54,24 +53,32 @@ async def analyze_policy(request: AnalyzeRequest):
     crew1 = Crew(agents=[analyzer], tasks=[task1], verbose=True)
     activity_summary = crew1.kickoff()
 
-    # Retrieve policy document based on summary
-    relevant_policy = retriever.get_relevant_documents(activity_summary)[0].page_content
+    # Safely cast to string (handles cases where .output doesn't exist)
+    activity_summary_text = str(activity_summary)
 
-    # Task 2: Judge for policy breach
+    # Get relevant policy content
+    docs = retriever.get_relevant_documents(activity_summary_text)
+    if not docs:
+        return {"error": "No relevant policy found for the given activity."}
+    relevant_policy = docs[0].page_content
+
+    # Task 2: Determine policy breach
     task2 = Task(
         description=f"""
-        User did this: {activity_summary}
+        User did this: {activity_summary_text}
         Policy says: {relevant_policy}
-        Determine if the user's action breaches the policy. Give a Yes/No and explain.
+        Determine if the user's action breaches the policy. Give a Yes/No and explanation.
         """,
         expected_output="Yes/No and explanation.",
         agent=judge
     )
     crew2 = Crew(agents=[judge], tasks=[task2], verbose=True)
     decision = crew2.kickoff()
+    decision_text = str(decision)
 
+    # Return final result
     return {
-        "activity_summary": activity_summary,
+        "activity_summary": activity_summary_text,
         "relevant_policy": relevant_policy,
-        "decision": decision
+        "decision": decision_text
     }

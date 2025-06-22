@@ -1,16 +1,17 @@
 import os
-from crewai import Agent
+from crewai import Agent, LLM
 from langchain_ollama import ChatOllama
 from dotenv import load_dotenv
 load_dotenv()
 
 model_name = os.getenv("MODEL")  # example: "qwen2.5:0.5b"
 
-# Create the actual LLM object
+# LLM object
 llm = ChatOllama(
     model=model_name,
+    provider="ollama",
     temperature=0.1,
-    max_tokens=1000
+    base_url="http://localhost:11434" 
 )
 
 def get_activity_analyzer(llm):
