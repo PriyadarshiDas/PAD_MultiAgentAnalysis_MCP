@@ -46,13 +46,16 @@ async def analyze_policy(request: AnalyzeRequest):
 
     # Task 1: Summarize user activity
     task1 = Task(
-        description=(
-        "Given the following banking activity log, provide a concise summary of what the user did. "
-        "Only describe the action objectively.\n\n"
-        f"Banking Activity: {banking_input}"
-        ),
-        expected_output="A structured analysis with impact ratings (High/Medium/Low).",
-        agent=analyzer
+        description=f"""
+        Summarize the following banking activity in one clear sentence.
+
+        Banking Activity: {banking_input}
+
+        Only return the clean summary.
+        """,
+        expected_output="A one-line summary of the user's activity.",
+        agent=analyzer,
+        return_output=True
     )
     crew1 = Crew(agents=[analyzer], tasks=[task1], verbose=True)
     activity_summary = crew1.kickoff()
@@ -71,10 +74,14 @@ async def analyze_policy(request: AnalyzeRequest):
         description=f"""
         User did this: {activity_summary_text}
         Policy says: {relevant_policy}
-        Determine if the user's action breaches the policy. Give a Yes/No and explanation.
+        Does the user's activity breach the policy?.
+        Respond in this format:
+        Answer: Yes or No
+        Reason: [A short explanation]
         """,
         expected_output="Yes/No and explanation.",
-        agent=judge
+        agent=judge,
+        return_output=True
     )
     crew2 = Crew(agents=[judge], tasks=[task2], verbose=True)
     decision = crew2.kickoff()

@@ -2,7 +2,7 @@ import requests
 import json
 
 if __name__ == "__main__":
-    user_activity = "User sent 5,000,000,000 USD multiple times to a foreign account."
+    user_activity = "User try to access bank personal information without authorization."
 
     try:
         response = requests.post("http://localhost:8000/analyze", json={
